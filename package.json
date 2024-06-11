@@ -19,6 +19,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build-with-rewired": "react-app-rewired build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -41,8 +42,12 @@
     ]
   },
   "devDependencies": {
+    "@types/chrome": "^0.0.268",
     "autoprefixer": "^10.4.19",
+    "customize-cra": "^1.0.0",
+    "html-webpack-plugin": "^5.6.0",
     "postcss": "^8.4.38",
+    "react-app-rewired": "^2.2.1",
     "tailwindcss": "^3.4.4"
   }
 }
