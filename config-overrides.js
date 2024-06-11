@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = function override(config, env) {
     config.entry = {
-        main: './src/components/popup.tsx',
+        main: './src/components/Popup.tsx',
         background: './src/background.ts',
     };
 

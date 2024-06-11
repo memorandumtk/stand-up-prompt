@@ -123,7 +123,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = function override(config, env) {
     config.entry = {
-        main: './src/components/popup.tsx',
+        main: './src/components/Popup.tsx',
         background: './src/background.ts',
     };
 
@@ -190,3 +190,133 @@ module.exports = function override(config, env) {
   ]
 }
 ``` 
+
+
+### Enable Counting by Clicking the notification
+- Define type of Summary(`src/types/Summary.ts`), which the number will be stored to.
+```text
+class Summary {
+    public number_of_standing: number;
+
+    constructor(number_of_standing: number) {
+        this.number_of_standing = number_of_standing;
+    }
+}
+
+export default Summary;
+```
+- Update the logic after firing the notification in `src/background.ts`
+```typescript
+import Summary from "./types/Summary";
+
+export {};  // This line makes the file a module
+const ALARM_NAME = "StandUpAlarm";
+const NOTIFICATION_NAME = "StandUpNotification";
+
+console.log("Hello from the background script!", ALARM_NAME);
+
+async function createAlarm() {
+    const alarm = await chrome.alarms.get(ALARM_NAME);
+    if (typeof alarm === 'undefined') {
+        await chrome.alarms.create(ALARM_NAME, {
+            periodInMinutes: 1
+        });
+    }
+}
+
+createAlarm();
+
+chrome.alarms.onAlarm.addListener(alarm => {
+    console.log('Received alarm: ', alarm);
+    if (alarm.name === ALARM_NAME) {
+        chrome.notifications.create(NOTIFICATION_NAME, {
+            type: "basic",
+            iconUrl: "logo192.png",
+            title: "Time to Stand Up!",
+            message: "It's time to stand up and stretch a bit.",
+            priority: 0
+        });
+
+        chrome.notifications.onClicked.addListener(notificationId => {
+            if (notificationId === NOTIFICATION_NAME) {
+                chrome.notifications.clear(NOTIFICATION_NAME);
+
+                chrome.storage.sync.get(["summary"], (result) => {
+                    console.log(result)  // just to see what's in the result
+                    const summary: Summary = result.summary || {number_of_standing: 0};
+                    const numberOfStanding = summary.number_of_standing ? summary.number_of_standing + 1 : 1;
+                    summary.number_of_standing = numberOfStanding;
+
+                    chrome.storage.sync.set({ summary: summary }, () => {
+                        console.log('Updated number_of_standing to', numberOfStanding);
+                    });
+                });
+            }
+        })
+    }
+});
+```
+- Update `src/components/Popup.tsx`
+```typescript
+import React, {useState, useEffect} from 'react';
+import ReactDOM from 'react-dom';
+import Summary from "../types/Summary";
+import GetSummaryFromStorage from "../utils/GetSummaryFromStorage";
+
+const Popup: React.FC = () => {
+    const [summary, setSummary] = useState<Summary>({number_of_standing: 0});
+
+    useEffect(() => {
+        const fetchSummary = async () => {
+            const summary = await GetSummaryFromStorage();
+            setSummary(summary);
+        };
+
+        fetchSummary();
+    }, []);
+
+    return (
+        <div>
+            <h1>Stand-Up Reminder</h1>
+            <p>{summary.number_of_standing}</p>
+        </div>
+    );
+};
+
+ReactDOM.render(<Popup/>, document.getElementById('root'));
+```
+- Create `src/utils/GetSummaryFromStorage.ts`
+```typescript
+
+import Summary from "../types/Summary";
+
+const GetSummaryFromStorage = async (): Promise<Summary> => {
+    // This process of making Promise object is needed to insert Summary object into the Promise object.
+    return new Promise((resolve, reject) => {
+        chrome.storage.sync.get(["summary"], (result) => {
+            if (chrome.runtime.lastError) {
+                return reject(chrome.runtime.lastError);
+            }
+            const summary = result.summary || {};
+            resolve(summary);
+        });
+    });
+}
+
+export default GetSummaryFromStorage;
+```
+- Create `src/utils/UpdateSummaryToStorage.ts`
+```typescript
+import Summary from "../types/Summary";
+
+const UpdateNumberOfStanding = async (numberOfStanding: number) => {
+    chrome.storage.sync.get(["summary"], (result) => {
+        let summary: Summary = result.summary;
+        summary.number_of_standing = numberOfStanding;
+        chrome.storage.sync.set({summary});
+    });
+}
+
+export default UpdateNumberOfStanding;
+```
+
