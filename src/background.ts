@@ -1,4 +1,4 @@
-import Summary from "./types/Summary";
+import { Summary } from "./types/Summary";
 
 export {};  // This line makes the file a module
 const ALARM_NAME = "StandUpAlarm";
@@ -32,14 +32,28 @@ chrome.alarms.onAlarm.addListener(alarm => {
             if (notificationId === NOTIFICATION_NAME) {
                 chrome.notifications.clear(NOTIFICATION_NAME);
 
-                chrome.storage.sync.get(["summary"], (result) => {
-                    console.log(result)  // just to see what's in the result
-                    const summary: Summary = result.summary || {number_of_standing: 0};
-                    const numberOfStanding = summary.number_of_standing ? summary.number_of_standing + 1 : 1;
-                    summary.number_of_standing = numberOfStanding;
+                chrome.storage.sync.get(["summary"], (result: {summary?: Summary}) => {
+                    let summary = result.summary;
+                    if (!summary) {
+                        summary = Summary.create(2);
+                    }
+
+                    console.log('Summary From background:', summary);
+                    // Format current date as YYYY-MM-DD to use as a key.
+                    const currentDate = new Date().toISOString().split('T')[0];
+
+                    if (!summary.results[currentDate]) {
+                        summary.results[currentDate] = {
+                            number_of_standing: 0
+                        };
+                    }
+
+                    // Add or update the number of standings for today
+                    const numberOfStanding = summary.results[currentDate].number_of_standing ?? 0;
+                    summary.results[currentDate].number_of_standing = numberOfStanding + 1;
 
                     chrome.storage.sync.set({ summary: summary }, () => {
-                        console.log('Updated number_of_standing to', numberOfStanding);
+                        console.log('Summary updated for', currentDate, ':', summary);
                     });
                 });
             }

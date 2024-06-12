@@ -261,14 +261,14 @@ chrome.alarms.onAlarm.addListener(alarm => {
 import React, {useState, useEffect} from 'react';
 import ReactDOM from 'react-dom';
 import Summary from "../types/Summary";
-import GetSummaryFromStorage from "../utils/GetSummaryFromStorage";
+import GetObjectFromStorage from "../utils/GetObjectFromStorage";
 
 const Popup: React.FC = () => {
     const [summary, setSummary] = useState<Summary>({number_of_standing: 0});
 
     useEffect(() => {
         const fetchSummary = async () => {
-            const summary = await GetSummaryFromStorage();
+            const summary = await GetObjectFromStorage('summary');
             setSummary(summary);
         };
 
@@ -290,7 +290,7 @@ ReactDOM.render(<Popup/>, document.getElementById('root'));
 
 import Summary from "../types/Summary";
 
-const GetSummaryFromStorage = async (): Promise<Summary> => {
+const GetObjectFromStorage = async (): Promise<Summary> => {
     // This process of making Promise object is needed to insert Summary object into the Promise object.
     return new Promise((resolve, reject) => {
         chrome.storage.sync.get(["summary"], (result) => {
@@ -303,7 +303,7 @@ const GetSummaryFromStorage = async (): Promise<Summary> => {
     });
 }
 
-export default GetSummaryFromStorage;
+export default GetObjectFromStorage;
 ```
 - Create `src/utils/UpdateSummaryToStorage.ts`
 ```typescript
@@ -320,3 +320,36 @@ const UpdateNumberOfStanding = async (numberOfStanding: number) => {
 export default UpdateNumberOfStanding;
 ```
 
+
+### Changed the structure of Summary type to align to set and get the summary of standing status.
+- Change `src/types/Summary.ts`
+```typescript
+export type Result = {
+    number_of_standing: number;
+};
+
+export class Summary {
+    public aim_hours: number;
+    public results: { [key: string]: Result };  // Using an object instead of an array
+
+    constructor(aim_hours: number) {
+        this.aim_hours = aim_hours;
+        this.results = {};  // Initialize as an empty object
+    }
+
+    public static create(aim_hours: number): Summary {
+        return new Summary(aim_hours);
+    }
+
+    // Method to add or update results
+    public AddOrUpdateResult(date: string, number_of_standing: number): void {
+        if (this.results[date]) {
+            this.results[date].number_of_standing += number_of_standing;  // Update existing entry
+        } else {
+            this.results[date] = { number_of_standing };  // Create new entry
+        }
+    }
+}
+```
+- Since these codes will likely change largely, please refer to the each branch from now on.
+- This branch name is `03.polish-summary-object-type`
