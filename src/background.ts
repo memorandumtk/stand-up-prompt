@@ -6,17 +6,44 @@ const NOTIFICATION_NAME = "StandUpNotification";
 
 console.log("Hello from the background script!", ALARM_NAME);
 
-async function createAlarm() {
+/**
+ * Create an alarm to go off every minute
+ * @param newAimValue unit: minutes
+ */
+async function createAlarm(newAimValue: number = 1) {
     const alarm = await chrome.alarms.get(ALARM_NAME);
     if (typeof alarm === 'undefined') {
         await chrome.alarms.create(ALARM_NAME, {
-            periodInMinutes: 1
+            periodInMinutes: newAimValue
         });
     }
 }
-
 createAlarm();
 
+/**
+ * Listen for the storage to change and log the new value
+ */
+
+chrome.storage.onChanged.addListener(async (changes, namespace) => {
+    if (namespace === "sync" && changes.summary) {
+        const newSummary = changes.summary.newValue as Summary;
+        await updateAlarm(newSummary.aim_minutes);
+    }
+});
+
+/**
+ * Update the alarm to go off every newAimHours
+ * @param newAimValue unit: minutes
+ */
+async function updateAlarm(newAimValue: number) {
+    await chrome.alarms.clear(ALARM_NAME);  // Clear existing alarm
+    await createAlarm(newAimValue);
+    console.log(`Alarm updated to repeat every ${newAimValue} minutes.`);
+}
+
+/**
+ * Listen for the alarm to go off and create a notification
+ */
 chrome.alarms.onAlarm.addListener(alarm => {
     console.log('Received alarm: ', alarm);
     if (alarm.name === ALARM_NAME) {

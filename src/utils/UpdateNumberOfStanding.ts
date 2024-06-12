@@ -1,5 +1,10 @@
 import { Summary } from "../types/Summary";
 
+/**
+ * Update the number of standing in the summary object
+ * @param numberOfStanding
+ * @constructor
+ */
 const UpdateNumberOfStanding = async (numberOfStanding: number) => {
     chrome.storage.sync.get(["summary"], (result) => {
         let summary: Summary = result.summary;

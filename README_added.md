@@ -61,7 +61,7 @@ npm run build
 ```
 
 
-### Make Background For Alarms and Notifications testing
+### Step1. Make Background For Alarms and Notifications testing
 - Make `src/background.ts`
 ```typescript
 
@@ -192,7 +192,7 @@ module.exports = function override(config, env) {
 ``` 
 
 
-### Enable Counting by Clicking the notification
+### Step2. Enable Counting by Clicking the notification
 - Define type of Summary(`src/types/Summary.ts`), which the number will be stored to.
 ```text
 class Summary {
@@ -321,35 +321,18 @@ export default UpdateNumberOfStanding;
 ```
 
 
-### Changed the structure of Summary type to align to set and get the summary of standing status.
-- Change `src/types/Summary.ts`
-```typescript
-export type Result = {
-    number_of_standing: number;
-};
-
-export class Summary {
-    public aim_hours: number;
-    public results: { [key: string]: Result };  // Using an object instead of an array
-
-    constructor(aim_hours: number) {
-        this.aim_hours = aim_hours;
-        this.results = {};  // Initialize as an empty object
-    }
-
-    public static create(aim_hours: number): Summary {
-        return new Summary(aim_hours);
-    }
-
-    // Method to add or update results
-    public AddOrUpdateResult(date: string, number_of_standing: number): void {
-        if (this.results[date]) {
-            this.results[date].number_of_standing += number_of_standing;  // Update existing entry
-        } else {
-            this.results[date] = { number_of_standing };  // Create new entry
-        }
-    }
-}
-```
-- Since these codes will likely change largely, please refer to the each branch from now on.
+### Step3. Changed the structure of Summary type to align to set and get the summary of standing status.
+- Since these codes will likely change largely, please refer to each branches from now on.
 - This branch name is `03.polish-summary-object-type`
+  - What I updated mainly are 
+  1. Update types structure of `src/types/Summary.ts`.
+  2. Make the logic of updating `number_of_standing` value when the notification is clicked.
+  3. Update the logic of getting the summary from the storage.
+  4. Display the number of standing in the popup.
+  5. Implemented the function removing the storage value.(it is just for refresh to see how new value is stored, but it might be useful for the future.)
+
+
+### Step4. Make the change of the span (aim_hours) effective
+- This branch name is `04.add-aim-hours`
+  - What I updated mainly are 
+  1. 
