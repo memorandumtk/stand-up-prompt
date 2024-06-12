@@ -16,11 +16,11 @@ export class Summary {
     }
 
     // Method to add or update results
-    public AddOrUpdateResult(date: string, number_of_standing: number): void {
-        if (this.results[date]) {
-            this.results[date].number_of_standing += number_of_standing;  // Update existing entry
-        } else {
-            this.results[date] = { number_of_standing };  // Create new entry
-        }
-    }
+    // public AddOrUpdateResult(date: string, number_of_standing: number): void {
+    //     if (this.results[date]) {
+    //         this.results[date].number_of_standing += number_of_standing;  // Update existing entry
+    //     } else {
+    //         this.results[date] = { number_of_standing };  // Create new entry
+    //     }
+    // }
 }
