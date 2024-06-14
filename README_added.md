@@ -335,4 +335,8 @@ export default UpdateNumberOfStanding;
 ### Step4. Make the change of the span (aim_hours) effective
 - This branch name is `04.add-aim-hours`
   - What I updated mainly are 
-  1. 
+  1. Update types structure of `src/types/Summary.ts`.
+  2. Made a form that includes the input of the span and the unit for it.
+  3. When the form is submitted, the value of the span is updated in storage api.
+  4. When the value of storage is updated, the value of alarm span is updated accordingly.
+  
