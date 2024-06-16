@@ -1,12 +1,12 @@
-import React, {useState, useEffect, ChangeEvent} from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import ReactDOM from 'react-dom';
-import {Summary, Result, AimDuration, DefaultDuration} from "../types/Summary";
+import { Summary, AimDuration, DefaultDuration } from "../types/Summary";
 import GetObjectFromStorage from "../utils/GetObjectFromStorage";
 import DeleteObjectFromStorage from "../utils/DeleteObjectFromStorage";
 import SetDurationOfAlarmIntoStorage from "../utils/SetDurationOfAlarmIntoStorage";
-import DurationForm from "./DurationForm";
 import SetSpanOfAlarmIntoStorage from "../utils/SetSpanOfAlarmIntoStorage";
-import '../css/Popup.css'
+import DurationForm from "./DurationForm";
+import '../css/Popup.css';
 
 const Popup: React.FC = () => {
     const currentDate = new Date().toISOString().split('T')[0];
@@ -21,13 +21,12 @@ const Popup: React.FC = () => {
             if (fetchedSummary) {
                 setSummary(fetchedSummary);
                 setAimDuration(fetchedSummary.aim_duration ? fetchedSummary.aim_duration : DefaultDuration);
-                setSpanOfAlarm(fetchedSummary.span_of_alarm ? fetchedSummary.span_of_alarm : 1)
+                setSpanOfAlarm(fetchedSummary.span_of_alarm ? fetchedSummary.span_of_alarm : 1);
             }
         };
 
         fetchSummary();
 
-        // Listen for the storage to change and log the new value
         const handleStorageChange = (changes: { [key: string]: chrome.storage.StorageChange }, areaName: string) => {
             if (areaName === "sync" && changes.summary) {
                 const newSummary = changes.summary.newValue as Summary;
@@ -77,14 +76,13 @@ const Popup: React.FC = () => {
         console.log('Summary from Popup in function HandleSubmit: ', summary);
     }
 
-    const handleSpanOfAlarmChange = async (event: ChangeEvent<HTMLInputElement>) => {
-        event.preventDefault();
+    const handleSpanOfAlarmChange = (event: ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
         const parsedValue = parseInt(value);
         if (!isNaN(parsedValue) && parsedValue > 0) {
             setSpanOfAlarm(parsedValue);
         } else {
-            console.log('Invalid value for span of alarm')
+            console.log('Invalid value for span of alarm');
         }
     };
 
@@ -92,45 +90,45 @@ const Popup: React.FC = () => {
         <div className="w-96 h-full">
             <h1>Stand-Up Reminder</h1>
 
-            <div>
-                <p>{summary && summary.results && summary.results[currentDate]
-                    ? summary.results[currentDate].number_of_standing
-                    : 0}</p>
-            </div>
+    <div>
+    <p>{summary && summary.results && summary.results[currentDate]
+        ? summary.results[currentDate].number_of_standing
+        : 0}</p>
+    </div>
 
-            <div>
-               <DurationForm
-                    aimDuration={aimDuration}
-                    handleTimeChange={handleTimeChange}
-                    handleSetDurationOfAlarm={handleSetDurationOfAlarm}
-               />
-            </div>
+    <div>
+    <DurationForm
+        aimDuration={aimDuration}
+    handleTimeChange={handleTimeChange}
+    handleSetDurationOfAlarm={handleSetDurationOfAlarm}
+    />
+    </div>
 
-            <div>
-                <p>Current Span of Alarm(min): {spanOfAlarm}</p>
-                <form onSubmit={handleSubmitSpanOfAlarm}>
-                    <input
-                        type="number"
-                        value={spanOfAlarm}
-                        onChange={handleSpanOfAlarmChange}
-                        min="1"
-                    />
-                    <button>
-                        Set span of alarms
-                    </button>
-                </form>
-            </div>
+    <div>
+    <p>Current Span of Alarm(min): {spanOfAlarm}</p>
+    <form onSubmit={handleSubmitSpanOfAlarm}>
+    <input
+        type="number"
+    value={spanOfAlarm}
+    onChange={handleSpanOfAlarmChange}
+    min="1" // Ensure the input does not accept values less than 1
+    />
+    <button type="submit">
+        Set span of alarms
+    </button>
+    </form>
+    </div>
 
-            <div>
-                <button
-                    type="submit"
-                    onClick={handleDeleteClick}
-                >
-                    Delete Summary from Storage
-                </button>
-            </div>
-        </div>
-    );
+    <div>
+    <button
+        type="submit"
+    onClick={handleDeleteClick}
+        >
+        Delete Summary from Storage
+    </button>
+    </div>
+    </div>
+);
 };
 
-ReactDOM.render(<Popup/>, document.getElementById('root'));
+ReactDOM.render(<Popup />, document.getElementById('root'));
