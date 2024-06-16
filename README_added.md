@@ -324,7 +324,7 @@ export default UpdateNumberOfStanding;
 ### Step3. Changed the structure of Summary type to align to set and get the summary of standing status.
 - Since these codes will likely change largely, please refer to each branches from now on.
 - This branch name is `03.polish-summary-object-type`
-  - What I updated mainly are 
+- What I updated mainly are 
   1. Update types structure of `src/types/Summary.ts`.
   2. Make the logic of updating `number_of_standing` value when the notification is clicked.
   3. Update the logic of getting the summary from the storage.
@@ -334,9 +334,22 @@ export default UpdateNumberOfStanding;
 
 ### Step4. Make the change of the span (aim_hours) effective
 - This branch name is `04.add-aim-hours`
-  - What I updated mainly are 
+- What I updated mainly are 
   1. Update types structure of `src/types/Summary.ts`.
   2. Made a form that includes the input of the span and the unit for it.
   3. When the form is submitted, the value of the span is updated in storage api.
   4. When the value of storage is updated, the value of alarm span is updated accordingly.
   
+
+### Step5. Add the logic of calculating how many to stand up a day
+- The branch name for this step is `05.set-time-duration-and-how-many-times-to-stand`.
+- What I updated mainly are
+  1. Update the types structure of `src/types/Summary.ts`.
+  2. (Changed the method in step 4 a lot.)
+  3. Made a form that processes the change of start_time and end_time of a duration of the alarm.
+  4. Made another input form to accept the change of span_of_alarm.
+  5. When those forms in 3 or 4, those value will be updated in storage api.
+  6. When the value of storage is updated, the value corresponding those in alarm is updated.
+- How to set a duration of a alarm.
+  - The value entered from the form will be checked with that if current time(minutes) is earlier, later, or within the range.  
+  - When it's updated, the new value entered from the form will be converted to minutes calculating from the midnight of the day as a number using `ChangeTimeToMinutes` function.

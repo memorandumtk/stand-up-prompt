@@ -8,6 +8,7 @@ const GetObjectFromStorage = async (StoreId: string): Promise<Summary> => {
                 return reject(chrome.runtime.lastError);
             }
             const summary = result.summary || {};
+            console.log('Summary from GetObjectFromStorage: ', summary);
             resolve(summary);
         });
     });

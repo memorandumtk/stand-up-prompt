@@ -1,95 +1,108 @@
 import React, {useState, useEffect, ChangeEvent} from 'react';
 import ReactDOM from 'react-dom';
-import {Summary, Result, AimValue} from "../types/Summary";
+import {Summary, Result, AimDuration, DefaultDuration} from "../types/Summary";
 import GetObjectFromStorage from "../utils/GetObjectFromStorage";
 import DeleteObjectFromStorage from "../utils/DeleteObjectFromStorage";
-import SetSpanOfNotifications from "../utils/SetSpanOfNotifications";
+import SetDurationOfAlarmIntoStorage from "../utils/SetDurationOfAlarmIntoStorage";
+import DurationForm from "./DurationForm";
+import SetSpanOfAlarmIntoStorage from "../utils/SetSpanOfAlarmIntoStorage";
+import '../css/Popup.css'
 
 const Popup: React.FC = () => {
     const currentDate = new Date().toISOString().split('T')[0];
     const [summary, setSummary] = useState<Summary | null>(null);
-    const [aimValue, setAimValue] = useState<AimValue>({value: 0, unit: 'minutes'});
+    const [aimDuration, setAimDuration] = useState<AimDuration>(DefaultDuration);
+    const [spanOfAlarm, setSpanOfAlarm] = useState<number>(1);
 
     useEffect(() => {
         const fetchSummary = async () => {
             const fetchedSummary = await GetObjectFromStorage('summary');
-            setSummary(fetchedSummary);
-            setAimValue({...aimValue, value: fetchedSummary.aim_minutes});
+            console.log('Summary from Popup: ', fetchedSummary);
+            if (fetchedSummary) {
+                setSummary(fetchedSummary);
+                setAimDuration(fetchedSummary.aim_duration ? fetchedSummary.aim_duration : DefaultDuration);
+                setSpanOfAlarm(fetchedSummary.span_of_alarm ? fetchedSummary.span_of_alarm : 1)
+            }
         };
 
         fetchSummary();
     }, []);
 
-    const numberOfStanding = summary ? summary.results[currentDate]?.number_of_standing ?? 0 : 0;
-
-    const HandleDeleteClick = async () => {
+    const handleDeleteClick = async () => {
         await DeleteObjectFromStorage('summary');
     };
 
-    const HandleSubmitOfSpanOfNotifications = async (event: ChangeEvent<HTMLFormElement>) => {
+    const handleSetDurationOfAlarm = async (event: ChangeEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (summary) {
-            await SetSpanOfNotifications(aimValue.value);
+            await SetDurationOfAlarmIntoStorage(aimDuration);
         }
         console.log('Summary from Popup in function HandleSubmit: ', summary);
     }
 
-    const HandleChangeOfSpanUnit = async (event: ChangeEvent<HTMLSelectElement>) => {
-        event.isPropagationStopped();
-        const newUnit = event.target.value;
-        setAimValue({...aimValue, unit: newUnit});
+    const handleTimeChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = event.target;
+        setAimDuration(prevState => ({
+            ...prevState,
+            [name]: value,
+        }));
+    };
+
+    const handleSubmitSpanOfAlarm = async (event: ChangeEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        if (summary) {
+            await SetSpanOfAlarmIntoStorage(spanOfAlarm);
+        }
+        console.log('Summary from Popup in function HandleSubmit: ', summary);
     }
 
-    const HandleChangeOfSpanValue = async (event: ChangeEvent<HTMLInputElement>) => {
-        let newAimValue = Number(event.target.value);
-        if (aimValue.unit === 'hours') {
-            newAimValue *= 60;
+    const handleSpanOfAlarmChange = async (event: ChangeEvent<HTMLInputElement>) => {
+        event.preventDefault();
+        const value = event.target.value;
+        const parsedValue = parseInt(value);
+        if (!isNaN(parsedValue) && parsedValue > 0) {
+            setSpanOfAlarm(parsedValue);
+        } else {
+            console.log('Invalid value for span of alarm')
         }
-        setAimValue({...aimValue, value: newAimValue});
     };
 
     return (
-        <div>
+        <div className="w-96 h-full">
             <h1>Stand-Up Reminder</h1>
+
             <div>
-                <p>{numberOfStanding}</p>
+                <p>{summary && summary.results && summary.results[currentDate]
+                    ? summary.results[currentDate].number_of_standing
+                    : 0}</p>
             </div>
+
             <div>
-                <form
-                    onSubmit={HandleSubmitOfSpanOfNotifications}
-                >
-                    <label>
-                        <input
-                            type="number"
-                            value={!aimValue.value
-                                ? ''
-                                : aimValue.unit === 'hours'
-                                    ? aimValue.value / 60
-                                    : aimValue.value
-                            }
-                            onChange={HandleChangeOfSpanValue}
-                        />
-                    </label>
+               <DurationForm
+                    aimDuration={aimDuration}
+                    handleTimeChange={handleTimeChange}
+                    handleSetDurationOfAlarm={handleSetDurationOfAlarm}
+               />
+            </div>
 
-                    <label>
-                        <select
-                            value={aimValue.unit}
-                            onChange={HandleChangeOfSpanUnit}
-                        >
-                            <option value="minutes">Minutes</option>
-                            <option value="hours">Hours</option>
-                        </select>
-                    </label>
-
+            <div>
+                <p>Current Span of Alarm(min): {spanOfAlarm}</p>
+                <form onSubmit={handleSubmitSpanOfAlarm}>
+                    <input
+                        type="number"
+                        value={spanOfAlarm}
+                        onChange={handleSpanOfAlarmChange}
+                    />
                     <button>
-                    Set Span of Notifications
+                        Set span of alarms
                     </button>
                 </form>
             </div>
+
             <div>
                 <button
                     type="submit"
-                    onClick={HandleDeleteClick}
+                    onClick={handleDeleteClick}
                 >
                     Delete Summary from Storage
                 </button>
