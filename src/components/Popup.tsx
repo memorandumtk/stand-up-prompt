@@ -8,6 +8,8 @@ import DurationForm from "./DurationForm";
 import SetSpanOfAlarmIntoStorage from "../utils/SetSpanOfAlarmIntoStorage";
 import '../css/Popup.css'
 import SpanForm from "./SpanForm";
+import ResetButton from "./ResetButton";
+import BaseBackground from "./BaseBackground";
 
 const Popup: React.FC = () => {
     const currentDate = new Date().toISOString().split('T')[0];
@@ -63,7 +65,7 @@ const Popup: React.FC = () => {
     }
 
     const handleTimeChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = event.target;
+        const {name, value} = event.target;
         setAimDuration(prevState => ({
             ...prevState,
             [name]: value,
@@ -90,42 +92,39 @@ const Popup: React.FC = () => {
     };
 
     return (
-        <div className="w-96 h-full">
-            <h1>Stand-Up Reminder</h1>
+        <BaseBackground>
+            <div className="w-96 h-full p-4 flex flex-col gap-4 justify-center items-center text-gray-100 bg-gray-900">
+                <h1 className="text-2xl font-medium">Stand-Up Reminder</h1>
 
-            <div>
-                <p>{summary && summary.results && summary.results[currentDate]
-                    ? summary.results[currentDate].number_of_standing
-                    : 0}</p>
-            </div>
+                <div>
+                    <p>{summary && summary.results && summary.results[currentDate]
+                        ? summary.results[currentDate].number_of_standing
+                        : 0}</p>
+                </div>
 
-            <div>
-               <DurationForm
-                    aimDuration={aimDuration}
-                    handleTimeChange={handleTimeChange}
-                    handleSetDurationOfAlarm={handleSetDurationOfAlarm}
-               />
-            </div>
+                <div>
+                    <DurationForm
+                        aimDuration={aimDuration}
+                        handleTimeChange={handleTimeChange}
+                        handleSetDurationOfAlarm={handleSetDurationOfAlarm}
+                    />
+                </div>
 
-            <div>
-                <p>Current Span of Alarm(min): {spanOfAlarm}</p>
-                <p>Recommended 60 minutes for </p>
-                <SpanForm
-                    spanOfAlarm={spanOfAlarm}
-                    handleSubmitSpanOfAlarm={handleSubmitSpanOfAlarm}
-                    handleSpanOfAlarmChange={handleSpanOfAlarmChange}
-                />
-            </div>
+                <div>
+                    <SpanForm
+                        spanOfAlarm={spanOfAlarm}
+                        handleSubmitSpanOfAlarm={handleSubmitSpanOfAlarm}
+                        handleSpanOfAlarmChange={handleSpanOfAlarmChange}
+                    />
+                </div>
 
-            <div>
-                <button
-                    type="submit"
-                    onClick={handleDeleteClick}
-                >
-                    Delete Summary from Storage
-                </button>
+                <div>
+                    <ResetButton
+                        handleDeleteClick={handleDeleteClick}
+                    />
+                </div>
             </div>
-        </div>
+        </BaseBackground>
     );
 };
 
