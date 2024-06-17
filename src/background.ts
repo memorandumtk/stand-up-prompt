@@ -63,11 +63,12 @@ chrome.alarms.onAlarm.addListener(alarm => {
                     // If results or results[currentDate] doesn't exist, create it.
                     if (summary.results === undefined) {
                         summary.results = {};
-                        if (!summary.results[currentDate]) {
-                            summary.results[currentDate] = {
-                                number_of_standing: 0
-                            };
-                        }
+                    }
+
+                    if (!summary.results[currentDate]) {
+                        summary.results[currentDate] = {
+                            number_of_standing: 0
+                        };
                     }
 
                     // Update the number of standings for today

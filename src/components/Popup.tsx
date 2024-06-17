@@ -7,6 +7,7 @@ import SetDurationOfAlarmIntoStorage from "../utils/SetDurationOfAlarmIntoStorag
 import DurationForm from "./DurationForm";
 import SetSpanOfAlarmIntoStorage from "../utils/SetSpanOfAlarmIntoStorage";
 import '../css/Popup.css'
+import SpanForm from "./SpanForm";
 
 const Popup: React.FC = () => {
     const currentDate = new Date().toISOString().split('T')[0];
@@ -108,17 +109,12 @@ const Popup: React.FC = () => {
 
             <div>
                 <p>Current Span of Alarm(min): {spanOfAlarm}</p>
-                <form onSubmit={handleSubmitSpanOfAlarm}>
-                    <input
-                        type="number"
-                        value={spanOfAlarm}
-                        onChange={handleSpanOfAlarmChange}
-                        min="1"
-                    />
-                    <button>
-                        Set span of alarms
-                    </button>
-                </form>
+                <p>Recommended 60 minutes for </p>
+                <SpanForm
+                    spanOfAlarm={spanOfAlarm}
+                    handleSubmitSpanOfAlarm={handleSubmitSpanOfAlarm}
+                    handleSpanOfAlarmChange={handleSpanOfAlarmChange}
+                />
             </div>
 
             <div>
