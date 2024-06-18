@@ -10,6 +10,8 @@ import '../css/Popup.css'
 import SpanForm from "./SpanForm";
 import ResetButton from "./ResetButton";
 import BaseBackground from "./BaseBackground";
+import ProgressBar from "./ProgressBar";
+import TitleWithProgress from "./TitleWithProgress";
 
 const Popup: React.FC = () => {
     const currentDate = new Date().toISOString().split('T')[0];
@@ -59,9 +61,9 @@ const Popup: React.FC = () => {
     const handleSetDurationOfAlarm = async (event: ChangeEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (summary) {
-            await SetDurationOfAlarmIntoStorage(aimDuration);
+            await SetDurationOfAlarmIntoStorage(aimDuration, currentDate);
         }
-        console.log('Summary from Popup in function HandleSubmit: ', summary);
+        console.log('Summary from Popup in function HandleSubmitDuration: ', summary);
     }
 
     const handleTimeChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -75,9 +77,9 @@ const Popup: React.FC = () => {
     const handleSubmitSpanOfAlarm = async (event: ChangeEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (summary) {
-            await SetSpanOfAlarmIntoStorage(spanOfAlarm);
+            await SetSpanOfAlarmIntoStorage(spanOfAlarm, currentDate);
         }
-        console.log('Summary from Popup in function HandleSubmit: ', summary);
+        console.log('Summary from Popup in function HandleSubmitSpanOfAlarm: ', summary);
     }
 
     const handleSpanOfAlarmChange = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -94,12 +96,19 @@ const Popup: React.FC = () => {
     return (
         <BaseBackground>
             <div className="w-96 h-full p-4 flex flex-col gap-4 justify-center items-center text-gray-100 bg-gray-900">
-                <h1 className="text-2xl font-medium">Stand-Up Reminder</h1>
+                <TitleWithProgress
+                    dataOfTheDay={summary && summary.results && summary.results[currentDate] ? summary.results[currentDate] : null}
+                />
 
-                <div>
-                    <p>{summary && summary.results && summary.results[currentDate]
-                        ? summary.results[currentDate].number_of_standing
-                        : 0}</p>
+                <div className="w-full flex flex-col gap-2 justify-center items-center">
+                    <p className="text-md">
+                        You stood up{' '}
+                        {
+                            summary && summary.results && summary.results[currentDate]
+                                ? summary.results[currentDate].number_of_standing
+                                : 0
+                        }{' '}times today within the duration you set.
+                    </p>
                 </div>
 
                 <div>

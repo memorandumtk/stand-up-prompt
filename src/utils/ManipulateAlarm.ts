@@ -1,6 +1,7 @@
 import { Summary, DefaultDuration, AimDuration } from "../types/Summary";
 import { GetCurrentMinutes } from "./GetCurrentMinutes";
 import { ChangeTimeToMinutes } from "./ChangeTimeToMinutes";
+import CreateOrUpdateStorage from "./CreateOrUpdateStorage";
 
 const ALARM_NAME = "StandUpAlarm";
 const NOTIFICATION_NAME = "StandUpNotification";
@@ -11,36 +12,26 @@ const NOTIFICATION_NAME = "StandUpNotification";
  */
 export async function CreateAlarm(span_of_alarm: number = 1, start_time = 540, end_time = 1020) {
     const currentMinutes = GetCurrentMinutes();
+    let nextAlarmInMinutes = span_of_alarm - (currentMinutes % span_of_alarm);
+    const currentDate = new Date().toISOString().split('T')[0];
 
     if (currentMinutes < start_time) {
         // If the current time is before the start time, set the alarm to go off at the start time
-        const minutesUntilStartTime = start_time - currentMinutes;
-        await chrome.alarms.create(ALARM_NAME, {
-            delayInMinutes: minutesUntilStartTime,
-            periodInMinutes: span_of_alarm
-        });
-        console.log(`Alarm set to start at ${Math.floor(start_time / 60)}:${start_time % 60 < 10 ? '0' : ''}${start_time % 60} AM, which is in ${minutesUntilStartTime} minutes.`);
+        nextAlarmInMinutes = start_time - currentMinutes;
 
     } else if (currentMinutes >= end_time) {
         // If the current time is after the end time, set the alarm to start at the start time tomorrow
-        const minutesUntilNextStartTime = (1440 - currentMinutes) + start_time; // 1440 minutes in a day
-        await chrome.alarms.create(ALARM_NAME, {
-            delayInMinutes: minutesUntilNextStartTime,
-            periodInMinutes: span_of_alarm
-        });
-        console.log(`Current time is outside the specified duration. Alarm set to start at ${Math.floor(start_time / 60)}:${start_time % 60 < 10 ? '0' : ''}${start_time % 60} AM tomorrow, which is in ${minutesUntilNextStartTime} minutes.`);
+        nextAlarmInMinutes = (1440 - currentMinutes) + start_time; // 1440 minutes in a day
 
     } else {
         const alarm = await chrome.alarms.get(ALARM_NAME);
-        if (typeof alarm === 'undefined') {
-            const nextAlarmInMinutes = span_of_alarm - (currentMinutes % span_of_alarm);
-            await chrome.alarms.create(ALARM_NAME, {
-                delayInMinutes: nextAlarmInMinutes,
-                periodInMinutes: span_of_alarm
-            });
-            console.log(`Alarm created to go off every ${span_of_alarm} minutes.`);
-        }
     }
+
+    await chrome.alarms.create(ALARM_NAME, {
+        delayInMinutes: nextAlarmInMinutes,
+        periodInMinutes: span_of_alarm,
+    });
+
 }
 
 /**

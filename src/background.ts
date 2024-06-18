@@ -3,6 +3,7 @@ import { GetCurrentMinutes } from "./utils/GetCurrentMinutes";
 import {CreateAlarm, UpdateAlarm} from "./utils/ManipulateAlarm";
 import GetObjectFromStorage from "./utils/GetObjectFromStorage";
 import {ChangeTimeToMinutes} from "./utils/ChangeTimeToMinutes";
+import CreateOrUpdateStorage from "./utils/CreateOrUpdateStorage";
 
 export {};  // This line makes the file a module
 const ALARM_NAME = "StandUpAlarm";
@@ -50,34 +51,9 @@ chrome.alarms.onAlarm.addListener(alarm => {
             if (notificationId === NOTIFICATION_NAME) {
                 chrome.notifications.clear(NOTIFICATION_NAME);
 
-                chrome.storage.sync.get(["summary"], (result: {summary?: Summary}) => {
-                    let summary = result.summary;
-                    if (!summary) {
-                        summary = Summary.create(DefaultDuration.start_time, DefaultDuration.end_time);
-                    }
-
-                    console.log('Summary From background:', summary);
-                    // Format current date as YYYY-MM-DD to use as a key.
-                    const currentDate = new Date().toISOString().split('T')[0];
-
-                    // If results or results[currentDate] doesn't exist, create it.
-                    if (summary.results === undefined) {
-                        summary.results = {};
-                    }
-
-                    if (!summary.results[currentDate]) {
-                        summary.results[currentDate] = {
-                            number_of_standing: 0
-                        };
-                    }
-
-                    // Update the number of standings for today
-                    summary.results[currentDate].number_of_standing += 1;
-
-                    chrome.storage.sync.set({ summary: summary }, () => {
-                        console.log('Summary updated for', currentDate, ':', summary);
-                    });
-                });
+                console.log('Notification clicked and storage will be updated.');
+                CreateOrUpdateStorage('summary')
+                    .then(r => console.log('Summary updated successfully'))
             }
         })
     }

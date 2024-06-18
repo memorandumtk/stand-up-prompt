@@ -20,6 +20,7 @@ export const DefaultDuration = {
  */
 export type Result = {
     number_of_standing: number;
+    how_many_times_to_stand: number;
 };
 
 /**
