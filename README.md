@@ -1,6 +1,7 @@
+# Stand Up Reminder Extension With React
 
-### Introduction
-// Ref
+## Introduction
+- Ref
 https://blog.logrocket.com/creating-chrome-extension-react-typescript/
 - Make project with typescript
 ```
@@ -61,6 +62,7 @@ npm run build
 ```
 
 
+## Steps I implemented this extension
 ### Step1. Make Background For Alarms and Notifications testing
 - Make `src/background.ts`
 ```typescript
@@ -378,3 +380,4 @@ export default UpdateNumberOfStanding;
   - Fixed the problem when the percentage of standing is NaN.
   - Added the logic of calculating the number of standing left in a day and next day too.
   - Added the image `human-try-to-stand.png` and make it be used in the logo of the extension and a notification.
+  
