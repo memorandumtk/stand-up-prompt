@@ -10,7 +10,6 @@ import '../css/Popup.css'
 import SpanForm from "./SpanForm";
 import ResetButton from "./ResetButton";
 import BaseBackground from "./BaseBackground";
-import ProgressBar from "./ProgressBar";
 import TitleWithProgress from "./TitleWithProgress";
 
 const Popup: React.FC = () => {
