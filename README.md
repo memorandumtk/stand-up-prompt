@@ -380,4 +380,6 @@ export default UpdateNumberOfStanding;
   - Fixed the problem when the percentage of standing is NaN.
   - Added the logic of calculating the number of standing left in a day and next day too.
   - Added the image `human-try-to-stand.png` and make it be used in the logo of the extension and a notification.
-  
+
+### Step9 Unnecessary files are removed
+- The branch name for this step is `09.remove-unnessary-file`.
