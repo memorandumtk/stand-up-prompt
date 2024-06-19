@@ -9,9 +9,9 @@
   "action": {
     "default_popup": "index.html",
     "default_icon": {
-      "16": "logo192.png",
-      "48": "logo192.png",
-      "128": "logo192.png"
+      "16": "human-try-to-stand.png",
+      "48": "human-try-to-stand.png",
+      "128": "human-try-to-stand.png"
     }
   },
   "permissions": [

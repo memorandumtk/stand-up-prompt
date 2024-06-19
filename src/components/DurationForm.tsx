@@ -29,7 +29,7 @@ const DurationForm: React.FC<DurationFormProps> = ({aimDuration, handleTimeChang
                 >
                     Start Time:
                 </label>
-                <div className="relative">
+                <div className="relative w-32">
                     <div className="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
                         <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
                              xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
@@ -54,7 +54,7 @@ const DurationForm: React.FC<DurationFormProps> = ({aimDuration, handleTimeChang
                 >
                     End Time:
                 </label>
-                <div className="relative">
+                <div className="relative w-32">
                     <div className="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
                         <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
                              xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">

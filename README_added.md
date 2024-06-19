@@ -341,7 +341,7 @@ export default UpdateNumberOfStanding;
   4. When the value of storage is updated, the value of alarm span is updated accordingly.
   
 
-### Step5. Add the logic of calculating how many to stand up a day
+### Step5. Add the logic of calculating how many times to stand up a day
 - The branch name for this step is `05.set-time-duration-and-how-many-times-to-stand`.
 - What I updated mainly are
   1. Update the types structure of `src/types/Summary.ts`.
@@ -353,3 +353,27 @@ export default UpdateNumberOfStanding;
 - How to set a duration of a alarm.
   - The value entered from the form will be checked with that if current time(minutes) is earlier, later, or within the range.  
   - When it's updated, the new value entered from the form will be converted to minutes calculating from the midnight of the day as a number using `ChangeTimeToMinutes` function.
+
+### Step6. Add the logic of changing number to stand up in a day dynamically.
+- The branch name for this step is `06.make-displaying-number-of-standing-dynamic
+- What I did are:
+  - Added chrome storage event listener to update the number of standing in the popup.
+  - `chrome.storage.onChanged.addListener`
+
+### Step7. Designed the popup to display the number of standing and the number of standing left in a day and make the popup colorful.
+- The branch name for this step is `07.implement-design-of-popup`
+- What I did are:
+  - Added the logic of calculating the number of standing left in a day.
+  - Designed the popup to display the number of standing and the number of standing left in a day.
+  - Made buttons the popup gradient with tailwind and the title be able to change the color according to the number of standing left in a day. FlowBite site helped me a lot.
+    - https://flowbite.com/docs/components/buttons/
+    - https://flowbite.com/docs/forms/timepicker/
+    - https://flowbite.com/docs/forms/number-input/
+    - https://design2tailwind.com/blog/tailwindcss-gradient-text/
+
+### Step8 Fixed the problem that the value of howManyTimesToStand is not set.
+- The branch name for this step is `08.reduce-points-of-error`.
+- What I did are:
+  - Fixed the problem that the value of howManyTimesToStand is not set.
+  - Fixed the problem when the percentage of standing is NaN.
+  - Added the logic of calculating the number of standing left in a day and next day too.

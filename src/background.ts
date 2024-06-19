@@ -41,7 +41,7 @@ chrome.alarms.onAlarm.addListener(alarm => {
     if (alarm.name === ALARM_NAME) {
         chrome.notifications.create(NOTIFICATION_NAME, {
             type: "basic",
-            iconUrl: "logo192.png",
+            iconUrl: "human-try-to-stand.png",
             title: "Time to Stand Up!",
             message: "It's time to stand up and stretch a bit.",
             priority: 0

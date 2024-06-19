@@ -10,9 +10,10 @@ const TitleWithProgress: React.FC<TitleWithProgressProps> = ({dataOfTheDay}) => 
     const howManyTimesToStand = dataOfTheDay && dataOfTheDay.how_many_times_to_stand ? dataOfTheDay.how_many_times_to_stand : 0;
 
     const percentage = Math.min((numberOfStanding / howManyTimesToStand) * 100, 100);
+    const fixedPercentage = isNaN(percentage) ? 0 : percentage.toFixed(2);
 
     const gradientStyle = {
-        backgroundImage: `linear-gradient(to right, #FFAA33 ${percentage}%, lightgreen, white)`,
+        backgroundImage: `linear-gradient(to right, #FFAA33 ${fixedPercentage}%, lightgreen, white)`,
         backgroundClip: 'text',
         WebkitBackgroundClip: 'text',
         color: 'transparent',
@@ -23,7 +24,7 @@ const TitleWithProgress: React.FC<TitleWithProgressProps> = ({dataOfTheDay}) => 
             className="text-2xl font-bold inline-block"
             style={gradientStyle}
         >
-            Stand Up Reminder {percentage.toFixed(2)}%
+            Stand Up For Yourself!
         </h1>
     )
 }
