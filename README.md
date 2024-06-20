@@ -50,11 +50,14 @@ npx tailwindcss init -p
 ```
 - Edit `tailwind.config.js`. Add these lines.
 ```text
+...
 content: [
     './src/**/*.{js,jsx,ts,tsx}',
 ],
+...
 ```
-- Edit `src/App.css`, for example I changed the bigness of the app component with the changes, the top element in the `App.tsx`.
+
+- For example I changed the bigness of the app component with the changes, the top element in the `App.tsx`.
 ```text
 ...
  return (
@@ -104,14 +107,17 @@ chrome.alarms.onAlarm.addListener(alarm => {
     }
 });
 ```
+
 - Install `chrome` package
 ```text
 npm install @types/chrome --save-dev
 ```
+
 - Install `react-app-rewired`, `customize-cra`, `html-webpack-plugin`
 ```text
 npm install react-app-rewired customize-cra html-webpack-plugin --save-dev
 ```
+
 - Edit `package.json`. In my way, I added `build-with-rewired` script.
 ```json
 "scripts": {
@@ -122,6 +128,7 @@ npm install react-app-rewired customize-cra html-webpack-plugin --save-dev
     "eject": "react-scripts eject"
 },
 ```
+
 - Edit `config-overrides.js`
   - main entry is `popup.tsx`, which will be needed later parts and necessary endpoint for `webpack` to bundle by default setting of that.
   > https://github.com/timarney/react-app-rewired/issues/421
@@ -218,6 +225,7 @@ class Summary {
 
 export default Summary;
 ```
+
 - Update the logic after firing the notification in `src/background.ts`
 ```typescript
 import Summary from "./types/Summary";
@@ -269,6 +277,7 @@ chrome.alarms.onAlarm.addListener(alarm => {
     }
 });
 ```
+
 - Update `src/components/Popup.tsx`
 ```typescript
 import React, {useState, useEffect} from 'react';
@@ -298,6 +307,7 @@ const Popup: React.FC = () => {
 
 ReactDOM.render(<Popup/>, document.getElementById('root'));
 ```
+
 - Create `src/utils/GetSummaryFromStorage.ts`
 ```typescript
 
@@ -318,6 +328,7 @@ const GetObjectFromStorage = async (): Promise<Summary> => {
 
 export default GetObjectFromStorage;
 ```
+
 - Create `src/utils/UpdateSummaryToStorage.ts`
 ```typescript
 import Summary from "../types/Summary";
