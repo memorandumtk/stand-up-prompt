@@ -30,7 +30,7 @@ cd prompt-stand-up-react
 }
 ```
 - First time build
-```text
+```tex
 npm run build
 ```
 
@@ -42,7 +42,7 @@ npm run build
 npm install -D tailwindcss postcss autoprefixer
 npx tailwindcss init -p
 ```
-- Edit `src/index.css`
+- Add these code to `src/index.css`
 ```css
 @tailwind base;
 @tailwind components;
@@ -56,7 +56,10 @@ content: [
 ```
 - Edit `src/App.css`, for example I changed the bigness of the app component with the changes, the top element in the `App.tsx`.
 ```text
-
+...
+ return (
+    <div className="App w-96 h-96">
+...
 ```
 
 - Then build.
@@ -122,13 +125,14 @@ npm install react-app-rewired customize-cra html-webpack-plugin --save-dev
 - Edit `config-overrides.js`
   - main entry is `popup.tsx`, which will be needed later parts and necessary endpoint for `webpack` to bundle by default setting of that.
   > https://github.com/timarney/react-app-rewired/issues/421
+  
 ```javascript
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = function override(config, env) {
     config.entry = {
-        main: './src/components/Popup.tsx',
+        main: './src/components/popup.tsx',
         background: './src/background.ts',
     };
 
@@ -170,32 +174,36 @@ module.exports = function override(config, env) {
     return config;
 };
 ```
-- Revise `manifest.json`
-```text
-{
-  "manifest_version": 3,
-  "name": "Stand-Up Reminder",
-  "version": "1.0",
-  "description": "Prompts users to stand up regularly and provides a summary.",
-  "background": {
-    "service_worker": "background.js"
-  },
-  "action": {
-    "default_popup": "index.html",
-    "default_icon": {
-      "16": "logo192.png",
-      "48": "logo192.png",
-      "128": "logo192.png"
-    }
-  },
-  "permissions": [
-    "alarms",
-    "storage",
-    "notifications"
-  ]
-}
-``` 
 
+- Edit `src/components/Popup.tsx`
+```typescript
+import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
+
+const Popup: React.FC = () => {
+  const [summary, setSummary] = useState<string>("");
+
+  useEffect(() => {
+    chrome.storage.sync.get(["summary"], (result) => {
+      setSummary(result.summary || "No summary available.");
+    });
+  }, []);
+
+  return (
+          <div>
+                  <h1>Stand-Up Reminder</h1>
+  <p>{summary}</p>
+  </div>
+);
+};
+
+ReactDOM.render(<Popup />, document.getElementById('root'));
+```
+
+- Build
+```text
+npm run build
+```
 
 ### Step2. Enable Counting by Clicking the notification
 - Define type of Summary(`src/types/Summary.ts`), which the number will be stored to.
